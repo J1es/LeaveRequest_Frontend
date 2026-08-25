@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import type { Route } from "./+types/home";
-import Button from "../components/button";
+import Button from "../components/Button";
+import PasswordInput from "~/components/PasswordInput";
+import Navbar from "~/components/NavBar";
 
 export function meta({ }: Route.MetaArgs) {
     return [
@@ -22,7 +24,7 @@ export default function About() {
     // https://css-tricks.com/snippets/css/a-guide-to-flexbox
 
     const increment = () => {
-        setCount((current) => current + 1);
+        setCount((prev) => prev + 1);
     }
 
     /*
@@ -46,6 +48,8 @@ export default function About() {
     // }, [count]);
 
     return <>
+        <Navbar navBarTitle="Leave Requests"/>
+
         <p>Hello, it is {now.toLocaleString()}</p>
         <p>The random number is {rand}</p>
         <div className="flex flex-row gap-2 bg-purple-900 w-full justify-evenly">
@@ -53,5 +57,8 @@ export default function About() {
             <Button onClick={increment}>Increment the count!</Button>
         </div>
         <p>The count is {count}</p>
+
+        <PasswordInput className="w-[90vw] max-w-md"></PasswordInput>
+
     </>
 }

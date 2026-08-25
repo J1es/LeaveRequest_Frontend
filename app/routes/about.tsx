@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { Route } from "./+types/home";
+import type { Route } from "./+types/dashboard";
 import Button from "../components/Button";
 import PasswordInput from "~/components/PasswordInput";
 import Navbar from "~/components/NavBar";

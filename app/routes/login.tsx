@@ -1,5 +1,6 @@
+import type { Route } from "./+types/dashboard";
 import PasswordInput from "~/components/PasswordInput";
-import type { Route } from "./+types/home";
+
 
 export function meta({ }: Route.MetaArgs) {
     return [

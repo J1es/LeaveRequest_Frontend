@@ -3,10 +3,97 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  /*Base Colours - Primary*/
+  --color-Bgen-Teal-500: #006680;
+  --color-Bgen-Green-500: #00CFB9;
+  --color-Bgen-Purple-500: #786FFF;
+  --color-Bgen-Navy-500: #272F51;
+  --color-Bgen-Lime-500: #D6E96D;
+  --color-Bgen-LightGreen-500: #43F7B6;
+  /*Base Colours - Complimentary*/
+  --color-Bgen-Brown-500: #d1c2b4;
+  --color-Bgen-Sand-500: #f1f1de;
+  --color-Bgen-Orange-500: #f46241;
+  --color-Bgen-Blue-500: #70b6da;
+  --color-Bgen-SkyBlue-500: #b2f5fe;
+  --color-Bgen-Yellow-500: #ffb110;
+
+  /* Teal */
+  --color-Bgen-Teal-400: #33859A;
+  --color-Bgen-Teal-300: #66A3B3;
+  --color-Bgen-Teal-200: #99C2CC;
+  --color-Bgen-Teal-100: #CCE0E6;
+
+  /* Green */
+  --color-Bgen-Green-400: #33D9C7;
+  --color-Bgen-Green-300: #66E2D5;
+  --color-Bgen-Green-200: #99ECE3;
+  --color-Bgen-Green-100: #CCF5F1;
+
+  /* Purple */
+  --color-Bgen-Purple-400: #938CFB;
+  --color-Bgen-Purple-300: #AEA9FF;
+  --color-Bgen-Purple-200: #C9C5FF;
+  --color-Bgen-Purple-100: #E4E2FF;
+
+  /* Navy */
+  --color-Bgen-Navy-400: #52596D;
+  --color-Bgen-Navy-300: #7D8290;
+  --color-Bgen-Navy-200: #A9ACB4;
+  --color-Bgen-Navy-100: #D4D5DA;
+
+  /* Lime */
+  --color-Bgen-Lime-400: #DEE785;
+  --color-Bgen-Lime-300: #E5EEA7;
+  --color-Bgen-Lime-200: #EEF4C5;
+  --color-Bgen-Lime-100: #F6FAE2;
+
+  /* Light Green */
+  --color-Bgen-LightGreen-400: #69F8C5;
+  --color-Bgen-LightGreen-300: #8CF9D3;
+  --color-Bgen-LightGreen-200: #B3FBE2;
+  --color-Bgen-LightGreen-100: #D9FDF0;
+
+  /* Brown */
+  --color-Bgen-Brown-400: #DAD0C3;
+  --color-Bgen-Brown-300: #E0DAD0;
+  --color-Bgen-Brown-200: #E9E4DD;
+  --color-Bgen-Brown-100: #F4F1EE;
+
+  /* Sand */
+  --color-Bgen-Sand-400: #F4F4E5;
+  --color-Bgen-Sand-300: #F7F7ED;
+  --color-Bgen-Sand-200: #FAFAF3;
+  --color-Bgen-Sand-100: #FCFCF9;
+
+  /* Orange */
+  --color-Bgen-Orange-400: #F77B67;
+  --color-Bgen-Orange-300: #F99F8D;
+  --color-Bgen-Orange-200: #FBC0B3;
+  --color-Bgen-Orange-100: #FDE0D9;
+
+  /* Blue */
+  --color-Bgen-Blue-400: #8DC5E1;
+  --color-Bgen-Blue-300: #A6D3E8;
+  --color-Bgen-Blue-200: #C5E2F0;
+  --color-Bgen-Blue-100: #E2F0F7;
+
+  /* Sky Blue */
+  --color-Bgen-SkyBlue-400: #C1F7FE;
+  --color-Bgen-SkyBlue-300: #D1F9FE;
+  --color-Bgen-SkyBlue-200: #E0FAFE;
+  --color-Bgen-SkyBlue-100: #EFFDFE;
+
+  /* Yellow */
+  --color-Bgen-Yellow-400: #FFC040;
+  --color-Bgen-Yellow-300: #FFD066;
+  --color-Bgen-Yellow-200: #FFDF94;
+  --color-Bgen-Yellow-100: #FFEFCA;
 }
 
 html,
 body {
-  @apply bg-neutral-100;
+  @apply bg-Bgen-Sand-200;
 
 }

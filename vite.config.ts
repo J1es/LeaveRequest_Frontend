@@ -7,4 +7,14 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8900', 
+        changeOrigin: true,              
+        secure: false,                   
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
 });

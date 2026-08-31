@@ -48,7 +48,7 @@ export default function About() {
     // }, [count]);
 
     return <>
-        <Navbar navBarTitle="Leave Requests"/>
+        <Navbar navBarTitle="Leave Requests" />
 
         <p>Hello, it is {now.toLocaleString()}</p>
         <p>The random number is {rand}</p>
@@ -59,6 +59,21 @@ export default function About() {
         <p>The count is {count}</p>
 
         <PasswordInput className="w-[90vw] max-w-md"></PasswordInput>
+
+        <div className="h-64 overflow-y-auto border">
+            <div className="space-y-2">
+                <p>Item 1</p>
+                <p>Item 2</p>
+                <p>Item 3</p>
+                <p>Item 4</p>
+                <p>Item 5</p>
+                <p>Item 6</p>
+                <p>Item 7</p>
+                <p>Item 8</p>
+                <p>Item 9</p>
+                <p>Item 10</p>
+            </div>
+        </div>
 
     </>
 }

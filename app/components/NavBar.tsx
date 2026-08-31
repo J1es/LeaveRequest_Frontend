@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Form, Link, useNavigate } from "react-router";
 import { House, LogOut } from "lucide-react";
 
 interface NavBarProps {
@@ -12,7 +12,7 @@ export default function Navbar({
     const navigate = useNavigate();
 
     return <>
-        <nav className="h-20 flex items-center justify-between bg-Bgen-Sand-200 shadow-md px-8">
+        <nav className="flex flex-col md:flex-row items-center justify-between gap-4 px-8 py-4 bg-Bgen-Sand-200 shadow-md">
             <h1 className="text-Bgen-Navy-500 text-4xl font-bold shrink-0">{navBarTitle}</h1>
 
             <div className="flex items-center gap-8">
@@ -26,24 +26,25 @@ export default function Navbar({
                     <House />
                 </Link>
 
-                <button 
-                tabIndex={0}
-                className="flex 
-                p-2 
-                items-center 
-                gap-2 
-                border-2 
-                rounded-lg 
-                text-Bgen-Navy-500 
-                hover:text-Bgen-Teal-500
-                0 transition-all
-                hover:scale-105 active:scale-95
-                cursor-pointer" 
-                onClick={() => navigate("/login")}>
-                    
-                    <span line-clamp-1>Sign Out</span>
-                    <LogOut />
-                </button>
+                <Form action="/logout" method="post">
+                    <button
+                        tabIndex={0}
+                        type="submit"
+                        className="flex 
+                        p-2 
+                        items-center 
+                        gap-2 
+                        border-2 
+                        rounded-lg 
+                        text-Bgen-Navy-500 
+                        hover:text-Bgen-Teal-500
+                        0 transition-all
+                        hover:scale-105 active:scale-95
+                        cursor-pointer">
+                        <span className="line-clamp-1">Sign Out</span>
+                        <LogOut />
+                    </button>
+                </Form>
             </div>
         </nav>
     </>

@@ -4,7 +4,7 @@ export default [
     index("routes/dashboard.tsx"),
     route("/login", "routes/login.tsx"),
     route("logout", "routes/logout.tsx"),
-    //route("/requestleave", "routes/requestleave.tsx"),
-    //route("/myrequests", "routes/myrequests.tsx"),
+    route("/requestleave", "routes/requestleave.tsx"),
+    route("/myrequests", "routes/myrequests.tsx"),
     route("/about", "routes/about.tsx"),//REMOVE
 ] satisfies RouteConfig;

@@ -42,22 +42,26 @@ function Cards() {
         {
             id: 1, title: "Request Leave",
             icon: PencilLine,
+            link: '/requestleave',
             roles: ["staff", "manager", "admin"],
         },
         {
             id: 2, title: "My Requests",
             icon: TentTree,
+            link: '/myrequests',
             roles: ["staff", "manager", "admin"],
         },
         {
             id: 3, title: "Manager Actions",
             icon: FileUser,
+            link: '/requestleave',
             roles: ["manager"],
         },
         {
             id: 4,
             title: "Admin Actions",
             icon: ShieldUser,
+            link: '/requestleave',
             roles: ["admin"],
 
         },
@@ -87,7 +91,7 @@ export default function Dashboard() {
                 {cards.map((card) => (
                     <Link
                         key={card.id}
-                        to={`/card/${card.id}`}
+                        to={card.link}
                         className="
                         group
                         flex

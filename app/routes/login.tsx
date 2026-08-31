@@ -26,7 +26,6 @@ export async function action({ request }: ActionFunctionArgs) {
     const email = formData.get("email")?.toString();
     const password = formData.get("password")?.toString();
     const redirectTo = ensureRelativeUrl(formData.get("redirectTo")?.toString() || "", "/");
-    console.log("redirectTo:", formData.get("redirectTo"));
     if (!email || !password) {
         return { error: "Email and password are required" };
     }

@@ -1,5 +1,6 @@
 import { Form, Link, useNavigate } from "react-router";
 import { House, LogOut } from "lucide-react";
+import companyLogo from "../Assets/Logo/BGEN_PRIMARY_LOGO_BLUE_COLOUR_ICON.png"
 
 interface NavBarProps {
     navBarTitle?: string;
@@ -13,7 +14,13 @@ export default function Navbar({
 
     return <>
         <nav className="flex flex-col md:flex-row items-center justify-between gap-4 px-8 py-4 bg-Bgen-Sand-200 shadow-md">
-            <h1 className="text-Bgen-Navy-500 text-4xl font-bold shrink-0">{navBarTitle}</h1>
+            <span className="flex items-center gap-4">
+                <img
+                    src={companyLogo}
+                    alt="Company Logo"
+                    className="h-8 md:h-12" />
+                <h1 className="text-Bgen-Navy-500 text-4xl font-bold shrink-0">{navBarTitle}</h1>
+            </span>
 
             <div className="flex items-center gap-8">
                 <Link

@@ -8,7 +8,7 @@ import companyLogo from "../Assets/Logo/BGEN_PRIMARY_LOGO_BLUE_COLOUR_ICON.png"
 export function meta({ }: Route.MetaArgs) {
     return [
         { title: "Login" },
-        { name: "description", content: "Welcome Please Sign In" },
+        { name: "Login", content: "Welcome Please Sign In" },
     ];
 }
 
@@ -72,8 +72,8 @@ export default function Login() {
                 </h2>
 
                 {actionData?.error && (
-                    <div className="mb-6 rounded-md bg-red-50 p-4 border border-red-200">
-                        <p className="text-sm text-red-700">{actionData.error}</p>
+                    <div className="mb-6 rounded-md bg-Bgen-Orange-100 p-4 border border-Bgen-Orange-300">
+                        <p className="text-sm font-bold text-Bgen-Orange-500">{actionData.error}</p>
                     </div>
                 )}
 
@@ -97,16 +97,16 @@ export default function Login() {
                         disabled={isSubmitting}
                         type="submit"
                         className="w-60 p-3
-                    font-medium 
-                    bg-Bgen-Yellow-500 
-                    rounded-lg
-                    shadow-md
-                    hover:-translate-y-0.5
-                    hover:shadow-lg
-                    active:translate-y-1
-                    transition-all 
-                    duration-60
-                    cursor-pointer">
+                        font-medium 
+                        bg-Bgen-Yellow-500 
+                        rounded-lg
+                        shadow-md
+                        hover:-translate-y-0.5
+                        hover:shadow-lg
+                        active:translate-y-1
+                        transition-all 
+                        duration-60
+                        cursor-pointer">
                         {isSubmitting ? "Signing in..." : "Sign In"}
                     </button>
                 </Form>

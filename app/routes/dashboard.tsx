@@ -8,7 +8,7 @@ import { authenticatedApiRequest } from "~/libs/api";
 export function meta({ }: Route.MetaArgs) {
     return [
         { title: "Dashboard" },
-        { name: "description", content: "Leave Request Dashboard" },
+        { name: "Leave Request Dashboard", content: "List of User Actions" },
     ];
 }
 
@@ -54,14 +54,14 @@ function Cards() {
         {
             id: 3, title: "Manager Actions",
             icon: FileUser,
-            link: '/requestleave',
+            link: '/myteam',
             roles: ["manager"],
         },
         {
             id: 4,
             title: "Admin Actions",
             icon: ShieldUser,
-            link: '/requestleave',
+            link: '/adminactions',
             roles: ["admin"],
 
         },
@@ -73,7 +73,7 @@ export default function Dashboard() {
     const { leaveBalance, user } = useLoaderData<typeof loader>();
     const cards = Cards().filter((card) => card.roles.includes(user?.role ?? ""));
     return <>
-        <div className="space-y-6">
+        <main className="space-y-6">
             <Navbar navBarTitle="Dashboard" />
 
             <div className="w-72 rounded-xl border border-Bgen-Navy-500 bg-Bgen-SkyBlue-200 p-6 shadow mx-auto">
@@ -108,15 +108,15 @@ export default function Dashboard() {
                         duration-200
                         hover:-translate-y-2
                         hover:shadow-2xl
-                        active:scale-95"
-                    >
-                        <h3 className="text-center
+                        active:scale-95">
+                            
+                        <h1 className="text-center
                         text-lg
                         font-semibold
                         transition-all
                         duration-100
                         group-hover:text-Bgen-Teal-500
-                        group-hover:scale-115">{card.title}</h3>
+                        group-hover:scale-115">{card.title}</h1>
 
                         <card.icon
                             size={48}
@@ -131,6 +131,6 @@ export default function Dashboard() {
                     </Link>
                 ))}
             </div>
-        </div>
+        </main>
     </>
 }

@@ -1,5 +1,5 @@
-import {useActionData, Form, useNavigation} from "react-router";
-import { authMiddleware, authContext, type User } from "~/libs/auth";
+import {useActionData, Form, useNavigation, redirect} from "react-router";
+import { authMiddleware} from "~/libs/auth";
 import type { Route } from "./+types/requestleave";
 import Navbar from "~/components/NavBar";
 import { authenticatedApiRequest } from "~/libs/api";
@@ -8,14 +8,8 @@ import companyLogo from "../Assets/Logo/BGEN_PRIMARY_LOGO_BLUE_COLOUR_ICON.png"
 export function meta({ }: Route.MetaArgs) {
     return [
         { title: "Request Leave" },
-        { name: "request leave", content: "Request Leave" },
+        { name: "request leave", content: "Leave Request Form" },
     ];
-}
-
-export async function loader({ context }: Route.LoaderArgs) {
-    const user = context.get(authContext) as User;
-
-    return { user };
 }
 
 export const middleware: Route.MiddlewareFunction[] = [
@@ -23,7 +17,6 @@ export const middleware: Route.MiddlewareFunction[] = [
 ];
 
 export async function action({ request, context }: Route.ActionArgs) {
-    const user = context.get(authContext) as User;
     const formData = await request.formData();
     const startDate = formData.get("startdate");
     const endDate = formData.get("enddate");
@@ -45,14 +38,11 @@ export async function action({ request, context }: Route.ActionArgs) {
         if (!createResponse.ok) {
             const errorData = await createResponse.json().catch(() => ({}));
             return {
-                error: errorData.message || `Failed to Request Leave (Status: ${createResponse.status})`
+                error: errorData.error?.message || `Failed to Request Leave (Status: ${createResponse.status})`
             };
         }
 
-        const newRequest = await createResponse.json();
-        //Redirect to created leave request ---TEMPORARY RETURN SUCCESS
-        //return redirect(`leave-requests/status/${user.id}`);
-        return { success: true };
+        return redirect(`/myrequests?success=true`);
 
     } catch (error) {
         return {
@@ -62,7 +52,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
 }
 
-export default function Dashboard() {
+export default function RequestLeave() {
     const actionData = useActionData() as { error?: string } | undefined;
     const navigation = useNavigation();
     const isSubmitting = navigation.state === "submitting";
@@ -84,40 +74,38 @@ export default function Dashboard() {
                         alt="Company Logo"
                         className="h-8 relative -top-1.5 md:-top-2.5" />
 
-                    <h1 className="text-3xl font-bold text-center whitespace-nowrap pb-3 md:pb-5">
+                    <h1 className="text-xl md:text-3xl font-bold text-center whitespace-nowrap pb-3 md:pb-5">
                         Leave Request Form
                     </h1></div>
 
                 {actionData?.error && (
-                    <div className="mb-6 rounded-md bg-red-50 p-4 border border-red-200">
-                        <p className="text-sm text-red-700">{actionData.error}</p>
+                    <div className="mb-6 rounded-md bg-Bgen-Orange-100 p-4 border border-Bgen-Orange-300">
+                        <p className="text-sm font-bold text-Bgen-Orange-500">{actionData.error}</p>
                     </div>
                 )}
 
 
                 <Form method="post" className="flex flex-col items-center gap-12 w-full text-xl">
 
-                    <div className="flex flex-row gap-3">
-                        <div className="flex flex-col items-center">
-                            <h2>Start Date</h2>
+                    <div className="flex flex-col md:flex-row gap-3">
+                        <label className="flex flex-col items-center">Start Date
                             <input
                                 type="date"
                                 name="startdate"
                                 defaultValue={new Date().toISOString().split("T")[0]}
                                 className="w-full px-4 py-2 border rounded-lg"
                             />
-                        </div>
+                        </label>
 
-                        <h2>:</h2>
+                        <h2 className="hidden md:inline">:</h2>
 
-                        <div className="flex flex-col items-center">
-                            <h2>End Date</h2>
+                        <label className="flex flex-col items-center">End Date
                             <input
                                 type="date"
                                 name="enddate"
                                 className="w-full px-4 py-2 border rounded-lg"
                             />
-                        </div>
+                        </label>
                     </div>
 
                     <button

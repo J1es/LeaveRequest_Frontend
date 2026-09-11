@@ -1,24 +1,49 @@
 import { authContext, authMiddleware, type User } from "~/libs/auth";
-import type { Route } from "./+types/myrequests";
+import type { Route } from "./+types/teamrequests";
 import Navbar from "~/components/NavBar";
 import { authenticatedApiRequest } from "~/libs/api";
-import { useFetcher, useLoaderData, useSearchParams } from "react-router";
-import { useEffect, useState } from "react";
+import { redirect, useFetcher, useLoaderData } from "react-router";
+import type { ManagementRecord } from "~/types/ManagementRecord";
 import type { LeaveRequest } from "~/types/LeaveRequest";
+import { useEffect, useState } from "react";
 
 export function meta({ }: Route.MetaArgs) {
     return [
-        { title: "My Requests" },
-        { name: "my requests", content: "List of User Requests" },
+        { title: "My Team" },
+        { name: "Team requests", content: "List of Team Members Requests" },
     ];
 }
 
-export async function loader({ context }: Route.LoaderArgs) {
+export async function loader({ params, context }: Route.LoaderArgs) {
     const user = context.get(authContext) as User;
+
+    if (user.role !== "manager") {
+        throw redirect("/");
+    }
+
+    const employeeId = Number(params.employeeId);
+
+    const managementResponse =
+        await authenticatedApiRequest(
+            context,
+            "api/user-management"
+        );
+
+    const managementData = await managementResponse.json();
+
+    const employeeRecord = managementData.data.find(
+        (record: ManagementRecord) =>
+            record.user.id === employeeId &&
+            record.manager.id === user.id
+    );
+
+    if (!employeeRecord) {
+        throw redirect("/myteam");
+    }
 
     const leaveRequestsResponse = await authenticatedApiRequest(
         context,
-        `api/leave-requests/status/${user.id}`
+        `api/leave-requests/status/${employeeId}`
     );
 
     if (!leaveRequestsResponse.ok) {
@@ -39,7 +64,7 @@ export async function loader({ context }: Route.LoaderArgs) {
         reason: request.reason ?? "No reason provided",
     }));
 
-    return { leaveRequests, user };
+    return { leaveRequests, employeeName: `${employeeRecord.user.firstName} ${employeeRecord.user.surname}`, };
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
@@ -47,6 +72,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
     const requestId = Number(formData.get("requestId"));
     const reason = String(formData.get("reason"));
+    const actionMethod = String(formData.get("actionMethod"));
 
     if (!requestId || Number.isNaN(requestId)) {
         return {
@@ -59,25 +85,49 @@ export async function action({ request, context }: Route.ActionArgs) {
     }
 
     try {
-        const response = await authenticatedApiRequest(
-            context,
-            "api/leave-requests",
-            {
-                method: "DELETE",
-                body: {
-                    leaveRequestId: requestId,
-                    reason,
-                },
-            }
-        );
+        let response: Response;
 
-        if (!response.ok) {
+        if (actionMethod === "Approve") {
+            response = await authenticatedApiRequest(
+                context,
+                "api/leave-requests/approve",
+                {
+                    method: "PATCH",
+                    body: {
+                        leaveRequestId: requestId,
+                        reason,
+                    },
+                }
+            );
+        }
+        else if (actionMethod === "Reject") {
+            response = await authenticatedApiRequest(
+                context,
+                "api/leave-requests/reject",
+                {
+                    method: "PATCH",
+                    body: {
+                        leaveRequestId: requestId,
+                        reason,
+                    },
+                }
+            );
+        }
+        else { return { error: "Invalid action" } }
+
+        if (!response.ok && actionMethod === "Approve") {
             return {
                 success: false,
-                error: "Failed to cancel request",
+                error: "Failed to Approve request",
             };
         }
-
+        else if (!response.ok && actionMethod === "Reject") {
+            return {
+                success: false,
+                error: "Failed to Reject request",
+            };
+        }
+        
         return { success: true };
 
     } catch (error) {
@@ -91,34 +141,35 @@ export const middleware: Route.MiddlewareFunction[] = [
     authMiddleware,
 ];
 
-export default function MyRequests() {
+export default function TeamRequests() {
 
-    const { leaveRequests } = useLoaderData<typeof loader>();
-    const requestSuccess = useSearchParams()[0].has("success");
+    const { leaveRequests, employeeName } = useLoaderData<typeof loader>();
 
-    const [showCancelModal, setShowCancelModal] = useState(false);
+    const [showManageActionModal, setShowManageActionModal] = useState(false);
     const [selectedRequestId, setSelectedRequestId] = useState<number | null>(null);
     const [reason, setReason] = useState("");
-    const [cancelError, setError] = useState("");
+    const [actionMethod, setActionMethod] = useState("");
+    const [ManageActionError, setError] = useState("");
 
-    const cancelRequestFetcher = useFetcher<{
+    const manageActionRequestFetcher = useFetcher<{
         success?: boolean;
         error?: string;
     }>();
 
     useEffect(() => {
-        if (cancelRequestFetcher.data?.success) {
-            setShowCancelModal(false);
+        if (manageActionRequestFetcher.data?.success) {
+            setShowManageActionModal(false);
+            setActionMethod("");
             setReason("");
             setSelectedRequestId(null);
         }
-        if (cancelRequestFetcher.data?.error) {
-            setError(cancelRequestFetcher.data.error);
+        if (manageActionRequestFetcher.data?.error) {
+            setError(manageActionRequestFetcher.data.error);
         }
-    }, [cancelRequestFetcher.data]);
+    }, [manageActionRequestFetcher.data]);
 
     return <>
-        <Navbar navBarTitle="My Requests" />
+        <Navbar navBarTitle="My Team" />
         <main className="min-h-screen pt-12 text-Bgen-Navy-500">
             <div
                 className="
@@ -128,17 +179,10 @@ export default function MyRequests() {
                 mx-auto
                 border
                 rounded-xl
-                p-6"
-            >
-
-                {requestSuccess && (
-                    <div className="mb-6 rounded-md bg-Bgen-LightGreen-100 p-4 border border-Bgen-LightGreen-300">
-                        <p className="text-sm font-bold text-center text-Bgen-Green-500">Leave Request Submitted</p>
-                    </div>
-                )}
+                p-6">
 
                 <h1 className="text-2xl md:text-3xl font-bold text-center whitespace-nowrap pb-3 md:pb-5">
-                    My Requests
+                    {employeeName}'s Requests
                 </h1>
 
                 <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-items-center">
@@ -159,8 +203,8 @@ export default function MyRequests() {
                             hover:-translate-y-2
                             hover:shadow-2xl
                             rounded-xl
-                            select-none"
-                        >
+                            select-none">
+
                             <h2 className="text-xl font-bold text-Bgen-Navy-500 mb-4">
                                 Request #{request.id}
                             </h2>
@@ -170,27 +214,52 @@ export default function MyRequests() {
                                 <p><strong>End Date:<br /></strong> {request.endDate}</p>
                                 <p><strong>Status:<br /></strong> {request.status}</p>
                                 <p className="wrap-break-word"><strong>Reason:<br /></strong> {request.reason}</p>
-                                {request.status == "Pending" && (
-                                    <button
-                                        tabIndex={0}
-                                        type="button"
-                                        className="
-                                        block
-                                        w-45
-                                        p-1
-                                        mx-auto
-                                        font-medium
-                                        bg-Bgen-Orange-400
-                                        rounded-lg
-                                        shadow-md
-                                        cursor-pointer"
-                                        onClick={() => {
-                                            setSelectedRequestId(request.id);
-                                            setError("");
-                                            setShowCancelModal(true);
-                                        }}>
-                                        Cancel
-                                    </button>)}
+                                <div className="flex flex-row">
+                                    {request.status == "Pending" && (
+                                        <button
+                                            tabIndex={0}
+                                            type="button"
+                                            className="
+                                            block
+                                            w-45
+                                            p-1
+                                            mx-auto
+                                            font-medium
+                                            bg-Bgen-Green-400
+                                            rounded-lg
+                                            shadow-md
+                                            cursor-pointer"
+                                            onClick={() => {
+                                                setSelectedRequestId(request.id);
+                                                setActionMethod("Approve");
+                                                setError("");
+                                                setShowManageActionModal(true);
+                                            }}>
+                                            Approve
+                                        </button>)}
+                                    {request.status == "Pending" && (
+                                        <button
+                                            tabIndex={0}
+                                            type="button"
+                                            className="
+                                            block
+                                            w-45
+                                            p-1
+                                            mx-auto
+                                            font-medium
+                                            bg-Bgen-Orange-400
+                                            rounded-lg
+                                            shadow-md
+                                            cursor-pointer"
+                                            onClick={() => {
+                                                setSelectedRequestId(request.id);
+                                                setActionMethod("Reject");
+                                                setError("");
+                                                setShowManageActionModal(true);
+                                            }}>
+                                            Reject
+                                        </button>)}
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -198,17 +267,17 @@ export default function MyRequests() {
             </div>
         </main>
 
-        {showCancelModal && (
+        {showManageActionModal && (
             <div className="fixed inset-0 flex items-center justify-center bg-Bgen-Navy-300/50">
                 <div className="bg-Bgen-Blue-100 rounded-lg p-6 w-96">
                     <h2 className="text-xl font-bold mb-4">
-                        Cancel Request
+                        {actionMethod === "Approve" ? "Approve" : "Reject"} Request
                     </h2>
 
-                    {cancelError && (
+                    {ManageActionError && (
                         <div className="mb-4 rounded-md bg-Bgen-Orange-100 p-4 border border-Bgen-Orange-300">
                             <p className="text-sm font-bold text-Bgen-Orange-500">
-                                {cancelError}
+                                {ManageActionError}
                             </p>
                         </div>
                     )}
@@ -224,7 +293,7 @@ export default function MyRequests() {
                         />
                     </label>
 
-                    <cancelRequestFetcher.Form method="post">
+                    <manageActionRequestFetcher.Form method="post">
                         <input
                             type="hidden"
                             name="requestId"
@@ -235,6 +304,12 @@ export default function MyRequests() {
                             type="hidden"
                             name="reason"
                             value={reason}
+                        />
+
+                        <input
+                            type="hidden"
+                            name="actionMethod"
+                            value={actionMethod}
                         />
 
                         <div className="flex justify-end gap-2 mt-4">
@@ -255,7 +330,8 @@ export default function MyRequests() {
                                         duration-60
                                         cursor-pointer"
                                 onClick={() => {
-                                    setShowCancelModal(false);
+                                    setShowManageActionModal(false);
+                                    setActionMethod("");
                                     setReason("");
                                 }}
                             >
@@ -265,7 +341,7 @@ export default function MyRequests() {
                             <button
                                 tabIndex={0}
                                 type="submit"
-                                disabled={cancelRequestFetcher.state === "submitting"}
+                                disabled={manageActionRequestFetcher.state === "submitting"}
                                 className="w-45 p-1
                                         mx-auto
                                         font-medium
@@ -279,12 +355,13 @@ export default function MyRequests() {
                                         duration-60
                                         cursor-pointer"
                             >
-                                {cancelRequestFetcher.state === "submitting" ? "Cancelling..." : "Confirm"}
+                                {manageActionRequestFetcher.state === "submitting" ? "Submitting..." : "Confirm"}
                             </button>
                         </div>
-                    </cancelRequestFetcher.Form>
+                    </manageActionRequestFetcher.Form>
                 </div>
             </div>
         )}
+
     </>
 }

@@ -12,11 +12,11 @@ export function meta({ }: Route.MetaArgs) {
     ];
 }
 
-export async function loader({ context }: Route.LoaderArgs) {
+export function loader({ context }: Route.LoaderArgs) {
     const user = context.get(authContext) as User;
 
     if (user.role !== "admin") {
-        throw redirect("/");
+        return redirect("/");
     }
 
 }
@@ -82,8 +82,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 }
 
 export default function AdminActionAddUser() {
-    const actionData = useActionData() as
-        { error?: string } | undefined;
+    const actionData = useActionData();
 
     const navigation = useNavigation();
 

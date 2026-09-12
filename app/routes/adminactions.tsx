@@ -17,7 +17,7 @@ export async function loader({ context }: Route.LoaderArgs) {
     const user = context.get(authContext) as User;
 
     if (user.role !== "admin") {
-        throw redirect("/");
+        return redirect("/");
     }
 
     const getStaffResponse = await authenticatedApiRequest(
@@ -298,7 +298,7 @@ export default function AdminActions() {
                         <input
                             type="hidden"
                             name="employeeId"
-                            value={selectedEmployee?.id ?? ""}
+                            value={selectedEmployee.id}
                         />
 
                         <input

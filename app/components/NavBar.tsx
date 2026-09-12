@@ -1,4 +1,4 @@
-import { Form, Link, useNavigate } from "react-router";
+import { Form, Link } from "react-router";
 import { House, LogOut } from "lucide-react";
 import companyLogo from "../Assets/Logo/BGEN_PRIMARY_LOGO_BLUE_COLOUR_ICON.png"
 
@@ -9,8 +9,6 @@ interface NavBarProps {
 export default function Navbar({
     navBarTitle = ""
 }: NavBarProps) {
-
-    const navigate = useNavigate();
 
     return <>
         <nav className="flex flex-col md:flex-row items-center justify-between gap-4 px-8 py-4 bg-Bgen-Sand-200 shadow-md">

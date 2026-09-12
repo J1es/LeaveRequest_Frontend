@@ -1,5 +1,5 @@
-import { authContext, endSession, type User } from "./auth";
-import { type RouterContextProvider, data } from "react-router";
+import { authContext } from "./auth";
+import { type RouterContextProvider } from "react-router";
 
 export interface ApiRequestOptions {
     method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -8,7 +8,7 @@ export interface ApiRequestOptions {
     headers?: HeadersInit;
 }
 
-export interface AuthenticatedApiRequestOptions extends Omit<ApiRequestOptions, "token"> {}
+export type AuthenticatedApiRequestOptions = Omit<ApiRequestOptions, "token">
 
 const BASE_URL = process.env.API_BASE_URL || "http://localhost:8900";
 
@@ -56,7 +56,7 @@ export async function authenticatedApiRequest(
     url: string,
     options: AuthenticatedApiRequestOptions = {}
 ): Promise<Response> {
-    const user = context.get(authContext) as User | null;
+    const user = context.get(authContext);
     const token = user?.token;
 
     return apiRequest(url, {

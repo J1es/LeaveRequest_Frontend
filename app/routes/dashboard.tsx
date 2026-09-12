@@ -21,7 +21,7 @@ export async function loader({ context }: Route.LoaderArgs) {
     );
 
     if (!leaveBalanceResponse.ok) {
-        throw new Response(
+        return new Response(
             "Failed to fetch remaining leave balance",
             { status: leaveBalanceResponse.status }
         );
@@ -71,7 +71,7 @@ function Cards() {
 
 export default function Dashboard() {
     const { leaveBalance, user } = useLoaderData<typeof loader>();
-    const cards = Cards().filter((card) => card.roles.includes(user?.role ?? ""));
+    const cards = Cards().filter((card) => card.roles.includes(user.role));
     return <>
         <main className="space-y-6">
             <Navbar navBarTitle="Dashboard" />

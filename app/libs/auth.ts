@@ -61,7 +61,7 @@ function parseJwt(token: string): JWTPayload | null {
 
         // Parse JSON from Base64
         const jsonPayload = Buffer.from(base64, "base64").toString("utf8");
-        return JSON.parse(jsonPayload);
+        return JSON.parse(jsonPayload) as JWTPayload;
     } catch {
         return null;
     }
@@ -129,7 +129,7 @@ export async function getUserFromRequest(request: Request): Promise<{ user: User
     }
 
     const payload = parseJwt(token);
-    if (!payload?.token?.email || !payload?.token?.role?.name) {
+    if (!payload?.token?.email || !payload.token.role.name) {
         return { user: null };
     }
 
@@ -150,17 +150,17 @@ export async function getUserFromRequest(request: Request): Promise<{ user: User
 }
 
 // React Router Middleware to enforce authentication on protected routes
-export async function authMiddleware({ request, context }: LoaderFunctionArgs | ActionFunctionArgs, next?: () => Promise<Response>): Promise<Response | void> {
+export async function authMiddleware({ request, context }: LoaderFunctionArgs | ActionFunctionArgs, next: () => Promise<Response>): Promise<Response> {
     const { user } = await getUserFromRequest(request);
     context.set(authContext, user);
 
     if (user) {
-        return next?.();
+        return next();
     }
 
     const { sessionCookie } = await endSession(request);
     const redirectTo = getSafeRedirectUrl(request);
-    throw redirect(
+    return redirect(
         `/login?redirectTo=${encodeURIComponent(redirectTo)}`,
         { headers: { "Set-Cookie": sessionCookie } }
     );

@@ -16,7 +16,7 @@ export async function loader({ context }: Route.LoaderArgs) {
     const user = context.get(authContext) as User;
 
     if (user.role !== "manager") {
-        throw redirect("/");
+        return redirect("/");
     }
 
     const staffManagementResponse = await authenticatedApiRequest(

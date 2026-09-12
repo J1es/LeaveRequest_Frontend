@@ -22,7 +22,7 @@ export async function loader({ context }: Route.LoaderArgs) {
     );
 
     if (!leaveRequestsResponse.ok) {
-        throw new Response(
+        return new Response(
             "Failed to fetch remaining leave requests",
             { status: leaveRequestsResponse.status }
         );
@@ -170,7 +170,7 @@ export default function MyRequests() {
                                 <p><strong>End Date:<br /></strong> {request.endDate}</p>
                                 <p><strong>Status:<br /></strong> {request.status}</p>
                                 <p className="wrap-break-word"><strong>Reason:<br /></strong> {request.reason}</p>
-                                {request.status == "Pending" && (
+                                {request.status === "Pending" && (
                                     <button
                                         tabIndex={0}
                                         type="button"
@@ -217,6 +217,7 @@ export default function MyRequests() {
                         Reason
                         <textarea
                             id="reason"
+                            autoFocus
                             name="reason"
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}

@@ -53,7 +53,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 }
 
 export default function RequestLeave() {
-    const actionData = useActionData() as { error?: string } | undefined;
+    const actionData = useActionData();
     const navigation = useNavigation();
     const isSubmitting = navigation.state === "submitting";
     return <>

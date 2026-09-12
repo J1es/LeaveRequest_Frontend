@@ -47,7 +47,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Login() {
-    const actionData = useActionData() as { error?: string } | undefined;
+    const actionData = useActionData();
     const navigation = useNavigation();
     const [searchParams] = useSearchParams();
     const redirectTo = searchParams.get("redirectTo") || "/";

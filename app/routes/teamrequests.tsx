@@ -18,7 +18,7 @@ export async function loader({ params, context }: Route.LoaderArgs) {
     const user = context.get(authContext) as User;
 
     if (user.role !== "manager") {
-        throw redirect("/");
+        return redirect("/");
     }
 
     const employeeId = Number(params.employeeId);
@@ -38,7 +38,7 @@ export async function loader({ params, context }: Route.LoaderArgs) {
     );
 
     if (!employeeRecord) {
-        throw redirect("/myteam");
+        return redirect("/myteam");
     }
 
     const leaveRequestsResponse = await authenticatedApiRequest(
@@ -47,7 +47,7 @@ export async function loader({ params, context }: Route.LoaderArgs) {
     );
 
     if (!leaveRequestsResponse.ok) {
-        throw new Response(
+        return new Response(
             "Failed to fetch remaining leave requests",
             { status: leaveRequestsResponse.status }
         );
@@ -215,7 +215,7 @@ export default function TeamRequests() {
                                 <p><strong>Status:<br /></strong> {request.status}</p>
                                 <p className="wrap-break-word"><strong>Reason:<br /></strong> {request.reason}</p>
                                 <div className="flex flex-row">
-                                    {request.status == "Pending" && (
+                                    {request.status === "Pending" && (
                                         <button
                                             tabIndex={0}
                                             type="button"
@@ -237,7 +237,7 @@ export default function TeamRequests() {
                                             }}>
                                             Approve
                                         </button>)}
-                                    {request.status == "Pending" && (
+                                    {request.status === "Pending" && (
                                         <button
                                             tabIndex={0}
                                             type="button"
